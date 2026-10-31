@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Deep Navy Background Circle -->
+  <circle cx="50" cy="50" r="50" fill="#0a0f1c" />
+  
+  <!-- Glowing Cyan Border -->
+  <circle cx="50" cy="50" r="46" fill="none" stroke="#0ea5e9" stroke-width="3" />
+  
+  <!-- Text: EVAN -->
+  <text x="50" y="58" font-family="Arial, sans-serif" font-weight="900" font-size="34" fill="#0ea5e9" text-anchor="middle" letter-spacing="1">EVAN</text>
+  
+  <!-- Small Golden Cross above text -->
+  <path d="M 50 16 L 50 30 M 44 22 L 56 22" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" />
+</svg>
