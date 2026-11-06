@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Spinner, Button, Row, Col } from 'react-bootstrap';
+import { Card, Table, Spinner, Button } from 'react-bootstrap';
 import { FaDownload, FaEye, FaFilePdf } from 'react-icons/fa';
 import MemberLayout from '../../components/MemberLayout';
 
@@ -18,9 +18,10 @@ export default function MemberPdfs() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleDownload = (url, name) => {
+  const handleDownload = (id, name) => {
     const link = document.createElement('a');
-    link.href = BASE + url;
+    // UPDATED: Uses the database download endpoint
+    link.href = `${BASE}/api/pdfs/download/${id}`; 
     link.download = name || 'document.pdf';
     link.target = '_blank';
     document.body.appendChild(link);
@@ -31,54 +32,57 @@ export default function MemberPdfs() {
   return (
     <MemberLayout title="PDFs & Documents">
       {loading ? (
-        <div className="text-center py-5"><Spinner animation="border" /></div>
+        <div className="text-center py-5"><Spinner animation="border" variant="info" /></div>
       ) : pdfs.length === 0 ? (
         <div className="text-center py-5">
-          <FaFilePdf size={48} className="text-muted mb-3" />
-          <p className="text-muted">No PDFs available yet.</p>
+          <FaFilePdf size={48} className="text-secondary mb-3" />
+          <p style={{ color: '#94a3b8' }}>No PDFs available yet.</p>
         </div>
       ) : (
-        <Card className="card-shadow border-0">
+        <Card className="border-0 shadow-sm" style={{ background: '#111827', border: '1px solid #1f2937' }}>
           <Card.Body>
-            <h5 className="mb-3">All Documents ({pdfs.length})</h5>
-            <Table striped hover responsive>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Title</th>
-                  <th style={{ width: '250px' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pdfs.map((p, i) => (
-                  <tr key={p.id}>
-                    <td>{i + 1}</td>
-                    <td>
-                      <FaFilePdf className="text-danger me-2" />
-                      <strong>{p.title}</strong>
-                    </td>
-                    <td>
-                      <Button
-                        size="sm"
-                        variant="outline-primary"
-                        className="me-2"
-                        href={BASE + p.filePath}
-                        target="_blank"
-                      >
-                        <FaEye /> View
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        onClick={() => handleDownload(p.filePath, p.title + '.pdf')}
-                      >
-                        <FaDownload /> Download
-                      </Button>
-                    </td>
+            <h5 className="mb-3 text-white">All Documents ({pdfs.length})</h5>
+            <div className="table-responsive">
+              <Table hover className="mt-3" variant="dark" style={{ background: 'transparent' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #1f2937' }}>
+                    <th className="text-info">#</th>
+                    <th className="text-info">Title</th>
+                    <th className="text-info" style={{ width: '250px' }}>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {pdfs.map((p, i) => (
+                    <tr key={p.id} style={{ verticalAlign: 'middle', borderColor: '#1f2937' }}>
+                      <td>{i + 1}</td>
+                      <td>
+                        <FaFilePdf className="text-danger me-2" />
+                        <strong className="text-light">{p.title}</strong>
+                      </td>
+                      <td>
+                        <Button
+                          size="sm"
+                          variant="outline-info"
+                          className="me-2"
+                          href={`${BASE}/api/pdfs/download/${p.id}`} // <-- UPDATED
+                          target="_blank"
+                        >
+                          <FaEye /> View
+                        </Button>
+                        <Button
+                          size="sm"
+                          style={{ background: '#0ea5e9', border: 0, color: '#0a0f1c' }}
+                          className="fw-bold"
+                          onClick={() => handleDownload(p.id, p.title + '.pdf')} // <-- UPDATED
+                        >
+                          <FaDownload /> Download
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
           </Card.Body>
         </Card>
       )}

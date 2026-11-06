@@ -9,9 +9,8 @@ import {
 export default function Sidebar() {
   const location = useLocation();
   const [hovered, setHovered] = useState(null);
-  const [isOpen, setIsOpen] = useState(false); // Controls mobile sidebar visibility
+  const [isOpen, setIsOpen] = useState(false);
 
-  // Close sidebar on mobile when a link is clicked
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
@@ -29,7 +28,7 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* MOBILE HAMBURGER BUTTON (Only visible on small screens) */}
+      {/* MOBILE HAMBURGER BUTTON */}
       <div className="d-md-none p-3 text-white" style={{ background: '#111827', borderBottom: '1px solid #1f2937' }}>
         <Button variant="outline-info" onClick={() => setIsOpen(!isOpen)} className="d-flex align-items-center border-0">
           {isOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
@@ -37,7 +36,7 @@ export default function Sidebar() {
         </Button>
       </div>
 
-      {/* BACKDROP (Darkens the screen behind the sidebar on mobile) */}
+      {/* BACKDROP */}
       {isOpen && (
         <div
           className="d-md-none position-fixed top-0 start-0 w-100 h-100"
@@ -46,18 +45,18 @@ export default function Sidebar() {
         />
       )}
 
-      {/* SIDEBAR */}
+      {/* SIDEBAR BODY */}
       <div
-        className={`d-flex flex-column flex-shrink-0 p-3 text-white shadow position-fixed position-md-relative ${isOpen ? 'd-flex' : 'd-none d-md-flex'}`}
+        className={`flex-column p-3 text-white ${isOpen ? 'd-flex' : 'd-none d-md-flex'}`}
         style={{
           width: '240px',
-          minHeight: 'calc(100vh - 56px)',
-          background: '#111827', // Deep navy background
+          background: '#111827',
           borderRight: '1px solid #1f2937',
-          zIndex: 1050,
-          top: '56px', // Below header
+          position: window.innerWidth < 768 ? 'fixed' : 'relative', // Fixed on mobile, relative on desktop
+          top: window.innerWidth < 768 ? '56px' : '0',
           left: 0,
           height: 'calc(100vh - 56px)',
+          zIndex: 1050,
           overflowY: 'auto'
         }}
       >
@@ -65,12 +64,7 @@ export default function Sidebar() {
         <div className="text-center pb-3 mb-3 border-bottom border-secondary">
           <div
             className="d-inline-flex align-items-center justify-content-center rounded-circle mb-2"
-            style={{
-              width: '60px',
-              height: '60px',
-              background: 'linear-gradient(135deg, #0ea5e9, #3b82f6)',
-              boxShadow: '0 4px 15px rgba(14, 165, 233, 0.4)'
-            }}
+            style={{ width: '60px', height: '60px', background: 'linear-gradient(135deg, #0ea5e9, #3b82f6)' }}
           >
             <FaChurch size={28} color="white" />
           </div>
@@ -88,69 +82,27 @@ export default function Sidebar() {
               <Nav.Item key={i}>
                 <Link
                   to={item.path}
-                  className="nav-link d-flex align-items-center rounded-3 py-2 px-3 text-decoration-none position-relative"
+                  className="nav-link d-flex align-items-center rounded-3 py-2 px-3 text-decoration-none"
                   onMouseEnter={() => setHovered(i)}
                   onMouseLeave={() => setHovered(null)}
                   style={{
                     color: active || isHovered ? '#ffffff' : '#94a3b8',
-                    background: active
-                      ? 'linear-gradient(90deg, #0ea5e9 0%, rgba(14, 165, 233, 0.2) 100%)'
-                      : isHovered
-                      ? 'rgba(14, 165, 233, 0.1)'
-                      : 'transparent',
-                    borderLeft: active
-                      ? '4px solid #0ea5e9'
-                      : isHovered
-                      ? '4px solid #0ea5e9'
-                      : '4px solid transparent',
-                    paddingLeft: isHovered ? '18px' : '14px',
+                    background: active ? 'linear-gradient(90deg, #0ea5e9 0%, rgba(14, 165, 233, 0.2) 100%)' : isHovered ? 'rgba(14, 165, 233, 0.1)' : 'transparent',
+                    borderLeft: active || isHovered ? '4px solid #0ea5e9' : '4px solid transparent',
                     fontWeight: active ? 600 : 500,
                     fontSize: '0.95rem',
-                    boxShadow: active ? '0 4px 15px rgba(14, 165, 233, 0.2)' : 'none',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                    transition: 'all 0.3s ease'
                   }}
                 >
-                  {/* ICON */}
-                  <span
-                    className="me-3 d-flex align-items-center"
-                    style={{
-                      fontSize: '18px',
-                      color: active || isHovered ? '#0ea5e9' : 'inherit',
-                      transform: isHovered || active ? 'scale(1.15)' : 'scale(1)',
-                      transition: 'all 0.3s ease',
-                      minWidth: '24px'
-                    }}
-                  >
+                  <span className="me-3 d-flex align-items-center" style={{ fontSize: '18px', color: active || isHovered ? '#0ea5e9' : 'inherit' }}>
                     {item.icon}
                   </span>
-
-                  {/* LABEL */}
                   <span>{item.label}</span>
-
-                  {/* ACTIVE DOT */}
-                  {active && (
-                    <span
-                      className="position-absolute top-50 end-0 translate-middle-y me-3 rounded-circle"
-                      style={{
-                        width: '8px',
-                        height: '8px',
-                        background: '#0ea5e9',
-                        boxShadow: '0 0 10px #0ea5e9'
-                      }}
-                    />
-                  )}
                 </Link>
               </Nav.Item>
             );
           })}
         </Nav>
-
-        {/* FOOTER */}
-        <div className="pt-3 mt-3 border-top border-secondary text-center">
-          <small style={{ color: '#64748b', fontSize: '0.75rem' }}>
-            © 2026 DDU
-          </small>
-        </div>
       </div>
     </>
   );
