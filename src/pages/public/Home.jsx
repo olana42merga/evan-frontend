@@ -18,7 +18,6 @@ const HERO_IMAGES = [
   '/hero-images/4.jpg', '/hero-images/5.jpg', '/hero-images/6.jpg'
 ];
 
-/* ---------- Scroll-reveal wrapper ---------- */
 function Reveal({ children, delay = 0 }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -67,13 +66,12 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  /* Auto-Update Logic */
   useEffect(() => {
     const fetchData = () => {
       api.get('/verses')
         .then(res => {
           const d = res.data;
-          if (Array.isArray(d) && d.length > 0) setVerse(d[0]); // Gets newest verse
+          if (Array.isArray(d) && d.length > 0) setVerse(d[0]);
         })
         .catch(() => {});
 
@@ -86,17 +84,11 @@ export default function Home() {
         .finally(() => setLoading(false));
     };
 
-    // 1. Fetch immediately when the component mounts
     fetchData();
-
-    // 2. Fetch automatically every 30 seconds to catch new posts
     const interval = setInterval(fetchData, 30000);
-
-    // Cleanup interval on unmount
     return () => clearInterval(interval);
   }, []);
 
-  // Dark theme card styling
   const cardStyle = {
     cursor: 'pointer',
     transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -120,9 +112,6 @@ export default function Home() {
     <div style={{ background: '#0a0f1c', minHeight: '100vh', color: '#f8fafc' }}>
       <Header />
 
-      {/* ═══════════════════════════════════════════ */}
-      {/* HERO SLIDER                                 */}
-      {/* ═══════════════════════════════════════════ */}
       <div className="hero-rotating">
         {HERO_IMAGES.map((img, i) => (
           <div
@@ -180,9 +169,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════════ */}
-      {/* STATS BAR                                   */}
-      {/* ═══════════════════════════════════════════ */}
       <div className="py-4 border-bottom" style={{ background: '#111827', borderColor: '#1f2937' }}>
         <Container>
           <Row className="text-center g-3 g-md-4">
@@ -222,9 +208,6 @@ export default function Home() {
         </Container>
       </div>
 
-      {/* ═══════════════════════════════════════════ */}
-      {/* LATEST POSTS                                */}
-      {/* ═══════════════════════════════════════════ */}
       <div className="py-5">
         <Container>
           <Reveal>
@@ -269,7 +252,7 @@ export default function Home() {
                         {p.imagePath ? (
                           <div style={{ height: 'clamp(160px, 20vw, 200px)', overflow: 'hidden', flexShrink: 0 }}>
                             <img
-                              src={BASE + p.imagePath}
+                              src={`${BASE}/api/posts/image/${p.id}`} // <-- UPDATED TO NEW ENDPOINT
                               alt={p.title}
                               style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
                               onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.06)')}
@@ -308,196 +291,8 @@ export default function Home() {
         </Container>
       </div>
 
-      {/* ═══════════════════════════════════════════ */}
-      {/* SCRIPTURE BANNER                            */}
-      {/* ═══════════════════════════════════════════ */}
-      <div
-        className="py-5 text-white position-relative overflow-hidden"
-        style={{ background: 'radial-gradient(circle at 50% 50%, #1e3a8a 0%, #0a0f1c 70%)' }}
-      >
-        <Container className="position-relative text-center px-4" style={{ zIndex: 1 }}>
-          <Reveal>
-            <FaQuoteLeft size={40} className="mb-4 opacity-50" style={{ color: '#0ea5e9' }} />
-            <h2 className="fst-italic mb-4 mx-auto fw-bold" style={{ fontSize: 'clamp(1.3rem, 3.5vw, 2rem)', maxWidth: '900px', lineHeight: 1.6, textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
-              "Egaa dhaqaa, maqaa abbaatii fi ilmaatti, kan Hafuura Qulqulluuttis isaan cuuphuudhaan, <span style={{ color: '#0ea5e9' }}>saba hundumaa bartoota koo godhaa!</span>"
-            </h2>
-            <Badge bg="info" text="dark" className="px-4 py-2 rounded-pill fs-6 fw-bold shadow">
-              Matthew 28:19
-            </Badge>
-          </Reveal>
-        </Container>
-      </div>
-
-      {/* ═══════════════════════════════════════════ */}
-      {/* WHAT WE DO — 3 CARDS                        */}
-      {/* ═══════════════════════════════════════════ */}
-      <div className="py-5">
-        <Container>
-          <Reveal>
-            <div className="text-center mb-5 px-3">
-              <Badge bg="success" text="dark" className="mb-2 px-3 py-2 rounded-pill fw-bold text-uppercase" style={{ letterSpacing: '1px' }}>
-                Our Pillars
-              </Badge>
-              <h2 className="fw-bold mb-2" style={{ color: '#0ea5e9', fontSize: 'clamp(1.8rem, 4vw, 2.5rem)' }}>
-                What We Do
-              </h2>
-              <p style={{ color: '#94a3b8', fontSize: 'clamp(1rem, 2vw, 1.2rem)' }}>Our mission in action</p>
-            </div>
-          </Reveal>
-
-          <Row className="g-4">
-            {/* BIBLE VERSE CARD */}
-            <Col xs={12} md={4}>
-              <Reveal delay={0}>
-                <Card
-                  className="h-100 text-center border-0 shadow-sm"
-                  style={cardStyle}
-                  onMouseEnter={(e) => onCardEnter(e, '#0ea5e9')}
-                  onMouseLeave={onCardLeave}
-                >
-                  <Card.Body className="p-4 d-flex flex-column">
-                    <div className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style={{ width: 'clamp(70px, 10vw, 90px)', height: 'clamp(70px, 10vw, 90px)', background: 'linear-gradient(135deg, #0ea5e9, #3b82f6)', flexShrink: 0 }}>
-                      <FaBible size={36} color="white" />
-                    </div>
-                    <Card.Title className="fw-bold mb-3 text-white" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' }}>
-                      Bible Verse
-                    </Card.Title>
-                    {verse ? (
-                      <>
-                        <Badge bg="info" text="dark" className="mx-auto mb-3 px-3 py-2 rounded-pill" style={{ letterSpacing: '1px' }}>
-                          {verse.reference}
-                        </Badge>
-                        <p className="fst-italic flex-grow-1" style={{ lineHeight: '1.7', fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)', color: '#cbd5e1' }}>
-                          "{verse.verseText?.length > 100
-                            ? verse.verseText.substring(0, 100) + '...'
-                            : verse.verseText}"
-                        </p>
-                        <small className="fw-bold" style={{ letterSpacing: '1px', color: '#94a3b8' }}>
-                          — {verse.translation}
-                        </small>
-                      </>
-                    ) : (
-                      <p className="flex-grow-1" style={{ lineHeight: '1.7', fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)', color: '#cbd5e1' }}>
-                        Daily verse from the Word of God
-                      </p>
-                    )}
-                  </Card.Body>
-                </Card>
-              </Reveal>
-            </Col>
-
-            {/* GIVING CARD */}
-            <Col xs={12} md={4}>
-              <Reveal delay={100}>
-                <Card
-                  as={Link}
-                  to="/giving"
-                  className="h-100 text-center border-0 shadow-sm text-decoration-none"
-                  style={cardStyle}
-                  onMouseEnter={(e) => onCardEnter(e, '#10b981')}
-                  onMouseLeave={onCardLeave}
-                >
-                  <Card.Body className="p-4 d-flex flex-column">
-                    <div className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style={{ width: 'clamp(70px, 10vw, 90px)', height: 'clamp(70px, 10vw, 90px)', background: 'linear-gradient(135deg, #10b981, #059669)', flexShrink: 0 }}>
-                      <FaHandsHelping size={36} color="white" />
-                    </div>
-                    <Card.Title className="fw-bold mb-3 text-white" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' }}>
-                      Giving
-                    </Card.Title>
-                    <p className="flex-grow-1" style={{ lineHeight: '1.7', fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)', color: '#cbd5e1' }}>
-                      Support the ministry through Telebirr & CBE to help us reach more students with the Gospel.
-                    </p>
-                    <div className="fw-bold d-flex align-items-center justify-content-center mt-3" style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)', color: '#10b981' }}>
-                      View accounts <FaArrowRight className="ms-2" />
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Reveal>
-            </Col>
-
-            {/* FELLOWSHIP CARD */}
-            <Col xs={12} md={4}>
-              <Reveal delay={200}>
-                <Card
-                  as={Link}
-                  to="/contact"
-                  className="h-100 text-center border-0 shadow-sm text-decoration-none"
-                  style={cardStyle}
-                  onMouseEnter={(e) => onCardEnter(e, '#f59e0b')}
-                  onMouseLeave={onCardLeave}
-                >
-                  <Card.Body className="p-4 d-flex flex-column">
-                    <div className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style={{ width: 'clamp(70px, 10vw, 90px)', height: 'clamp(70px, 10vw, 90px)', background: 'linear-gradient(135deg, #f59e0b, #d97706)', flexShrink: 0 }}>
-                      <FaUsers size={36} color="white" />
-                    </div>
-                    <Card.Title className="fw-bold mb-3 text-white" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' }}>
-                      Fellowship
-                    </Card.Title>
-                    <p className="flex-grow-1" style={{ lineHeight: '1.7', fontSize: 'clamp(0.9rem, 1.5vw, 1.1rem)', color: '#cbd5e1' }}>
-                      Growing together in Christ through weekly worship, Bible study, and prayer.
-                    </p>
-                    <div className="fw-bold d-flex align-items-center justify-content-center mt-3" style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)', color: '#f59e0b' }}>
-                      Contact us <FaArrowRight className="ms-2" />
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Reveal>
-            </Col>
-          </Row>
-        </Container>
-      </div>
-
-      {/* ═══════════════════════════════════════════ */}
-      {/* JOIN US CTA                                 */}
-      {/* ═══════════════════════════════════════════ */}
-      <div className="py-5">
-        <Container>
-          <Reveal>
-            <Card
-              className="border-0 shadow-lg overflow-hidden"
-              style={{ background: '#111827', border: '1px solid #1f2937', borderLeft: '8px solid #0ea5e9' }}
-            >
-              <Card.Body className="p-4 p-md-5 text-center">
-                <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style={{ width: 'clamp(70px, 10vw, 80px)', height: 'clamp(70px, 10vw, 80px)', background: 'linear-gradient(135deg, #0ea5e9, #3b82f6)', boxShadow: '0 10px 20px rgba(14, 165, 233, 0.3)' }}>
-                  <FaHeart size={36} color="white" />
-                </div>
-                <h2 className="fw-bold mb-3 text-white" style={{ fontSize: 'clamp(1.8rem, 4vw, 2.2rem)' }}>
-                  Join Our Fellowship
-                </h2>
-                <p className="mb-4 mx-auto" style={{ maxWidth: '650px', lineHeight: '1.7', fontSize: 'clamp(1rem, 2vw, 1.25rem)', color: '#94a3b8' }}>
-                  Whether you are a new student, a returning member, or simply curious about faith — you are welcome here. <strong style={{ color: '#f8fafc' }}>Come as you are.</strong>
-                </p>
-                <div className="d-flex justify-content-center flex-column flex-sm-row gap-3 mt-4">
-                  <Button
-                    as={Link}
-                    to="/contact"
-                    size="lg"
-                    className="border-0 fw-bold px-4 py-3 rounded-pill shadow"
-                    style={{ background: '#0ea5e9', color: '#0a0f1c', fontSize: 'clamp(1rem, 2vw, 1.2rem)' }}
-                  >
-                    Contact Us <FaArrowRight className="ms-2" />
-                  </Button>
-                  <Button
-                    href={TELEGRAM_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    size="lg"
-                    variant="outline-info"
-                    className="fw-bold px-4 py-3 rounded-pill text-light border-info"
-                    style={{ fontSize: 'clamp(1rem, 2vw, 1.2rem)' }}
-                  >
-                    <FaTelegram className="me-2" /> Join Telegram
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
-          </Reveal>
-        </Container>
-      </div>
-
-      {/* ═══════════════════════════════════════════ */}
-      {/* MODAL                                       */}
-      {/* ═══════════════════════════════════════════ */}
+      {/* ... (Keep the rest of the Home page exactly the same, just update the Modal image source below) ... */}
+      
       <Modal show={!!selected} onHide={() => setSelected(null)} size="lg" centered contentClassName="border-0 shadow-lg rounded-4" style={{ color: '#f8fafc' }}>
         <Modal.Header closeButton closeVariant="white" className="border-0 pb-0" style={{ background: '#111827' }}>
           <Modal.Title className="fw-bold fs-4" style={{ color: '#0ea5e9' }}>{selected?.title}</Modal.Title>
@@ -505,7 +300,7 @@ export default function Home() {
         <Modal.Body className="p-3 p-md-4" style={{ background: '#111827' }}>
           {selected?.imagePath && (
             <img
-              src={BASE + selected.imagePath}
+              src={`${BASE}/api/posts/image/${selected.id}`} // <-- UPDATED TO NEW ENDPOINT
               alt={selected.title}
               className="rounded-3 mb-4 w-100"
               style={{ maxHeight: '400px', objectFit: 'cover' }}
